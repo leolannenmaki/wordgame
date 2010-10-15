@@ -1,0 +1,18 @@
+{
+  "_dict_": {
+    "name": "wordgame",
+    "version_no": "0.1"
+  },
+  "name": "%(name)s",
+  "version": "%(version_no)s",
+  "build":{
+    "dir": "main",
+    "filename": "build/%(name)s-%(version_no)s.js",
+    "files":[
+      "common/*.js",
+      "common.js",
+      "client/*.js"
+    ]
+  }
+}
+

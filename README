@@ -1,0 +1,1 @@
+for (klass in kandi.require('common')) { window[klass] = kandi.require('common')[klass];}
