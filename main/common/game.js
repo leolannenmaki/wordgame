@@ -1,7 +1,13 @@
 var Board = require('./board').Board,
     TileSet = require('./tileset').TileSet;
-var Game = function (size) {
+/**
+ * @constructor
+ * @param {number} size
+ * @param {string=} uuid
+ */
+var Game = function (size, uuid) {
     this.size = size;
+    this.uuid = uuid || 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     // TODO: set the wordvalidator on server
     this.board = new Board(this.size);
     this.players = [];
@@ -32,7 +38,7 @@ Game.prototype = {
     },
     set: function (player, x, y, c) {
         var name = isString(player) ? player : player.getName();
-        if (player !== this.whosTurn().getName()) {
+        if (name !== this.whosTurn().getName()) {
             throw {
                 name: 'Error',
                 message: 'Invalid player'

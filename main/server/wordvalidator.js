@@ -1,9 +1,9 @@
-var flr = require('./FileLineReader');
-
-var dict = {}, reader = new flr.FileLineReader("/usr/share/dict/words"); 
+var flr = require('./FileLineReader'), 
+    dict = {}, 
+    reader = new flr.FileLineReader("/usr/share/dict/words"); 
 while (reader.hasNextLine()) {
    dict[reader.nextLine()] = true; 
 }
-exports.isValid = function (word) {
+exports.wordValidator = function (word) {
     return dict[word] || false;
 }

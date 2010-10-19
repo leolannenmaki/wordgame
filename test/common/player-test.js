@@ -1,7 +1,7 @@
 var vows = require('vows'),
     assert = require('assert'),
-    Tile = require('../tile.js').Tile,
-    Player = require('../player.js').Player;
+    Tile = require('../../main/common').Tile,
+    Player = require('../../main/common').Player;
 
 vows.describe('Player').addBatch({
    'A player': {
@@ -21,7 +21,18 @@ vows.describe('Player').addBatch({
                 assert.throws(function() {topic.removeTile('C')});
             }
 
-       }
+        },
+        'can be constructed from Json': {
+            topic: '{ "name": "Leo", "points": "10", "tiles": [{ "letter": "A", "value": "1"}, {"letter": "B", "value": "2"}]}',
+            'player has correct values': function (topic) {
+                var player = Player.fromJson(topic);
+                assert.equal(player.getName(), 'Leo');
+                assert.equal(player.getPoints(), 10);
+                var tiles = player.getTiles();
+                assert.equal(tiles[0].getLetter(), 'A');
+            },
+            
+        }
    }
 }).export(module);
 

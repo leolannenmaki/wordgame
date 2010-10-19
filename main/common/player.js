@@ -1,8 +1,35 @@
-function Player(name) {
+var Tile = require('./tile').Tile;
+/**
+ * @constructor
+ * @param {string} name
+ * @param {number=} points
+ */
+function Player(name, points) {
    this.name = name;
    this.tiles = [];
-   this.points = 0;
+   this.points = points || 0;
 }
+Player.fromJson = function (json) {
+    var data = null;
+    if (typeof json === 'string') {
+        data = JSON.parse(json);
+    } else {
+        data = json;
+    }
+    if (data.name !== undefined && data.points !== undefined) {
+        var player = new Player(String(data.name), Number(data.points));
+        if (data.tiles && data.tiles.length) {
+            data.tiles.map(function (tile) {
+                player.addTile(Tile.fromJson(tile));
+            });
+        }
+        return player;
+    }
+    throw {
+        name: 'Error',
+        message: 'Data did not contain name and points'
+    };
+};
 Player.prototype = {
     getName: function() {return this.name},
     addTile: function(tile) {
@@ -28,6 +55,15 @@ Player.prototype = {
     },
     addPoints: function(points) {
         return this.points += points;
+    },
+    toJson: function () {
+        return {
+            name: this.name,
+            tiles: this.tiles.map(function (tile) {
+                return tile.toJson();
+            }),
+            points: this.points
+        };
     }
 };
 exports.Player = Player;

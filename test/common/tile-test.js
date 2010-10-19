@@ -1,5 +1,5 @@
 var vows = require('vows'), assert = require('assert');
-var Tile = require('../tile').Tile;
+var Tile = require('../../main/common').Tile;
 
 vows.describe('Tile').addBatch({
    'A tile': {
@@ -20,7 +20,17 @@ vows.describe('Tile').addBatch({
             'returns blank when asked for letter': function (topic) {
                 assert.equal(topic.getLetter(), ' ');
             }
+        },
+        'can be constructed from Json': {
+            topic: '{ "letter": "A", "value": "1" }',
+            'tile has correct values': function (topic) {
+                var tile = Tile.fromJson(topic);
+                assert.equal(tile.getLetter(), 'A');
+                assert.equal(tile.getValue(), 1);
+            },
+            
         }
+
    }
 }).export(module);
 

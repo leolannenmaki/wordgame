@@ -1,9 +1,12 @@
-var vows = require('vows'), assert = require('assert'), Board = require('../src/common').Board;
+var vows = require('vows'),
+    assert = require('assert'),
+    Board = require('../../main/common').Board
+    wordValidator = require('../../main/server').wordValidator;
 
 vows.describe('Board').addBatch({
    'A board': {
        '2x2': {
-           topic: new Board(2).set(0, 0, 'o').set(0, 1, 'n').set(1, 0, 'o'),
+           topic: new Board(2, wordValidator).set(0, 0, 'o').set(0, 1, 'n').set(1, 0, 'o'),
             
             'return false when validated': function (topic) {
                 assert.isFalse(topic.isValid());
@@ -14,8 +17,8 @@ vows.describe('Board').addBatch({
             'throws if trying to set a non character': function (topic) {
                 assert.throws(function () { topic.set(0, 0, 1);});
             },
-            'retunrns size when asked to': function(topic) {
-                assert(topic.getSize(), 2);
+            'returns size when asked to': function(topic) {
+                assert.equal(topic.getSize(), 2);
             }
 
        },

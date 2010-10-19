@@ -1,7 +1,7 @@
-var DomTileSet = function (container, tileset) {
-    var frame = $('<div id="wordgame-tileset"></div>').appendTo(container); //.css('position', 'relative');
+var DomTileSet = function (container, tiles) {
+    var frame = $('<div class="wordgame-tileset"></div>').appendTo(container); //.css('position', 'relative');
     var selected = null;
-    tileset.getTiles().forEach(function (tile, index) {
+    tiles.forEach(function (tile, index) {
        $(frame).append($('<div>' + tile.getLetter() + ' ' + tile.getValue() + '</div>').width(30).height(30).css({
             //'position': 'absolute',
             //'top': 100 + index * 25 + 'px', 

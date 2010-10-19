@@ -1,8 +1,8 @@
 var vows = require('vows'),
     assert = require('assert'),
-    TileSet = require('../tileset').TileSet,
-    Player = require('../player').Player,
-    Tile = require('../tile').Tile;
+    TileSet = require('../../main/common').TileSet,
+    Player = require('../../main/common').Player,
+    Tile = require('../../main/common').Tile;
 vows.describe('TileSet').addBatch({
     'A TileSet can be used to start a game': {
         topic: new TileSet(),

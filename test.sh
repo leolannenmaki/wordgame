@@ -1,2 +1,2 @@
 #!/bin/bash
-vows test/common/*.js
+vows test/common/*.js test/server/*.js

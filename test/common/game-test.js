@@ -1,7 +1,7 @@
 var vows = require('vows'), assert = require('assert');
-var Game = require('../game').Game,
-    Player = require('../player').Player,
-    Tile = require('../tile').Tile;
+var Game = require('../../main/common').Game,
+    Player = require('../../main/common').Player,
+    Tile = require('../../main/common').Tile;
 
 vows.describe('Game').addBatch({
    'A game': {
@@ -16,10 +16,11 @@ vows.describe('Game').addBatch({
                 assert.equal(topic.whosTurn().getTiles().length, 7);
             },
             'throws if invalid player tries to set': function (topic) {
-                assert.throws(function () {topi.set('Ninni', 0, 0, 'a');});
+                assert.throws(function () {topic.set('Ninni', 0, 0, 'a');});
             },
             'sets the board corretly when Leo plays': function (topic) {
                 var leo = topic.whosTurn();
+                leo.tiles = []; // To make certain player has the next tiles with correct values
                 leo.addTile(new Tile('C', 1)).addTile(new Tile('A', 1)).addTile(new Tile('R', 1));
                 assert.equal(
                     topic.toString(),
