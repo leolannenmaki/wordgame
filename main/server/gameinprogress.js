@@ -10,7 +10,6 @@ function GameInProgress (playerData) {
     this.playerData.forEach(function (pd) {
         this.playerNames.push(pd.player.getName());
         this.game.addPlayer(pd.player); 
-        this.playerData.push(pd);
     }.bind(this));
     this.game.start();
     

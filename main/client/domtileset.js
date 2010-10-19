@@ -8,10 +8,11 @@ var DomTileSet = function (container, tiles) {
             //'left': x * 25 + 'px',
             'border': '1px solid black',
             'text-align': 'center',
-            'float': 'left'
+            'float': 'left',
+            'cursor': 'pointer'
        }).click(function () {
            selected = {tile: tile, el: this};
-       })); 
+       }).draggable()); 
     });
 }
 exports.DomTileSet = DomTileSet;

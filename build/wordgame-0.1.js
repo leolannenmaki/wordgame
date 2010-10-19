@@ -552,7 +552,7 @@ wordgame._jsbuild_.defineModule("client/domtileset.js",function(exports,module,r
             'float': 'left'
        }).click(function () {
            selected = {tile: tile, el: this};
-       })); 
+       }).draggable()); 
     });
 }
 exports.DomTileSet = DomTileSet;
