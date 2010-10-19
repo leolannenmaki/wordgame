@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang=en>
+<head>
+    <meta charset=utf-8>
+    <title>Wordgame</title>
+</head>
+<body>
+    <div id="info" style="overflow: hidden; height: 18px;"></div>
+    <form id="login">
+        <input type="text" name="name" placeholder="Enter your name" autofocus/> 
+        <input type="submit" value="Go" />
+    </form>
+    <div id="wordgame">
+        <div id="player"></div> 
+        <div id="opponents"></div>
+    </div>
+    <form id="end-turn">
+        <input type="submit" value="End Turn" />
+    </form>
+    <script src="/jquery.js"></script>
+    <script src="/dnode.js"></script>
+    <script src="/client.js"></script>
+    <script>
+        $(function () {
+            var Player = wordgame.require('common').Player,
+                Board = wordgame.require('common').Board,
+                DomBoard = wordgame.require('client').DomBoard,
+                DomTileSet = wordgame.require('client').DomTileSet;
+            function info (text) {
+                $('#info').prepend('<div>' + text + '</div>');
+            }
+            
+            var player = null,
+                domTileSet = null,
+                board = null
+                domBoard = null;
+            $('#wordgame').hide();
+            $('#end-turn').hide();
+
+            $('#login').submit(function (e) {
+                e.preventDefault();
+                $('#login').hide();
+                $('#wordgame').show();
+                DNode({
+                    getLoginName : function (f) { f($('input[name="name"]').val()); },
+                    setPlayer: function (p) { 
+                        window.p = player = Player.fromJson(p);
+                        board = new Board(10);
+                        domBoad = new DomBoard('#wordgame', board);
+                        domTileSet = new DomTileSet('#wordgame', player.getTiles()); 
+                        $('#player').text(player.getName() + ' points: ' + player.getPoints());
+                        info('Waiting for turn');
+                    },
+                    yourTurn: function (endTurn) {
+                        info('Your turn');
+                        $('#end-turn').show().submit(function (e) {
+                            e.preventDefault();
+                            endTurn({
+                                placements: [/*{x: 0, y: 0, c: 'A'}*/]
+                            });
+                            $(this).hide().unbind();
+                            info('Waiting for opponents');
+                        });
+                                            },
+                    gameEvent: function () {
+                    },
+                    info: function (text) {
+                        info(text);
+                    }
+                }).connect(function (remote) {
+                    remote.register();
+                });
+            });
+        }); 
+    </script>
+</body>
+</html>
+
