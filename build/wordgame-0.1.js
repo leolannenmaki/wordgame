@@ -174,13 +174,13 @@ wordgame._jsbuild_.defineModule("common/game.js",function(exports,module,require
 /**
  * @constructor
  * @param {number} size
+ * @param {function=} wordValidator
  * @param {string=} uuid
  */
-var Game = function (size, uuid) {
+var Game = function (size, wordValidator, uuid) {
     this.size = size;
     this.uuid = uuid || 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-    // TODO: set the wordvalidator on server
-    this.board = new Board(this.size);
+    this.board = new Board(this.size, wordValidator);
     this.players = [];
     this.inTurn = 0;
     this.turnBuffer = [];
@@ -249,11 +249,15 @@ exports.Game = Game;
 
 wordgame._jsbuild_.defineModule("common/player.js",function(exports,module,require,globals,undefined){
  var Tile = require('./tile').Tile;
-
-function Player(name) {
+/**
+ * @constructor
+ * @param {string} name
+ * @param {number=} points
+ */
+function Player(name, points) {
    this.name = name;
    this.tiles = [];
-   this.points = 0;
+   this.points = points || 0;
 }
 Player.fromJson = function (json) {
     var data = null;
@@ -346,12 +350,15 @@ Tile.prototype = {
     /**
      * @return {number} The value
      */
-    getValue: function() {return this.value;},
+    getValue: function() {
+        return this.value;
+    },
     /**
      * @return {string} The letter
      */
-    getLetter: function() {return this.letter;},
-
+    getLetter: function() {
+        return this.letter;
+    },
     toJson: function () {
         return {
             letter: this.getLetter(),
@@ -464,13 +471,36 @@ exports.TileSet = TileSet;
  
 });
 
-wordgame._jsbuild_.defineModule("common.js",function(exports,module,require,globals,undefined){
- exports.Board = require("./common/board").Board;
-exports.Game = require("./common/game").Game;
-exports.Player = require("./common/player").Player;
-exports.Tile = require("./common/tile").Tile;
-exports.TileSet = require("./common/tileset").TileSet;
+wordgame._jsbuild_.defineModule("common/uuid.js",function(exports,module,require,globals,undefined){
+ /**
+ * From http://www.broofa.com/Tools/Math.uuid.js
+ * Licence and copyright information from the original file:
+ *
+ * Math.uuid.js (v1.4)
+ * http://www.broofa.com
+ * mailto:robert@broofa.com
+ * Copyright (c) 2010 Robert Kieffer
+ * Dual licensed under the MIT and GPL licenses.
+ * 
+ */
+// A more compact, but less performant, RFC4122v4 solution:
+function RFC4122v4UUID () { 
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+      return v.toString(16);
+    }).toUpperCase();
+};
+exports.generateUuid = RFC4122v4UUID;
+ 
+});
 
+wordgame._jsbuild_.defineModule("common.js",function(exports,module,require,globals,undefined){
+ exports.Board = require('./common/board').Board;
+exports.Game = require('./common/game').Game;
+exports.Player = require('./common/player').Player;
+exports.Tile = require('./common/tile').Tile;
+exports.TileSet = require('./common/tileset').TileSet;
+exports.generateUuid = require('./common/uuid').generateUuid;
  
 });
 

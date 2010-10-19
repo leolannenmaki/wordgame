@@ -3,13 +3,13 @@ var Board = require('./board').Board,
 /**
  * @constructor
  * @param {number} size
+ * @param {function=} wordValidator
  * @param {string=} uuid
  */
-var Game = function (size, uuid) {
+var Game = function (size, wordValidator, uuid) {
     this.size = size;
     this.uuid = uuid || 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-    // TODO: set the wordvalidator on server
-    this.board = new Board(this.size);
+    this.board = new Board(this.size, wordValidator);
     this.players = [];
     this.inTurn = 0;
     this.turnBuffer = [];
