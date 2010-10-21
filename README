@@ -1,1 +1,8 @@
-for (klass in kandi.require('common')) { window[klass] = kandi.require('common')[klass];}
+This is the "experimental" part of my Bachelor's Thesis.
+
+To run you need to have node.js with dnode installed.
+To test you need to have vows.js installed.
+To build you need to have JSBuild installed.
+
+I fill fix the hardcoded paths in the future.
+
