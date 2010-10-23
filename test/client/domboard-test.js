@@ -18,4 +18,10 @@
         equals($('#wordgame-board div').html(), 'A');
         equals($('#wordgame-board div:eq(2)').html(), 'C');
     });
+    /*test('Dropping tiles on board fires an event', function () {
+        var Board = wordgame.require('common/board').Board,
+            board = new Board('2'),
+            DomBoard = wordgame.require('client/domboard').DomBoard,
+            domBoad = new DomBoard('#wordgame', board);
+    });*/
 })(jQuery);

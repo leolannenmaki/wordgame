@@ -23,8 +23,12 @@ function GameInProgress (playerData) {
     }.bind(this));
 }
 GameInProgress.prototype.endTurn = function (data) {
+    var player = this.game.whosTurn();
+    console.log('Player: ' + player.getName() + ' ended his turn');
     if (data !== undefined && data.placements !== undefined && data.placements.length) {
+        console.log('Got placements!');
         data.placements.forEach(function (placement) {
+            console.log(placement);
             this.game.set(this.playerNames[this.game.inTurn], placement.x, placement.y, placement.c);
         }.bind(this));
     }
@@ -33,6 +37,7 @@ GameInProgress.prototype.endTurn = function (data) {
     } catch (e) {
         // Give turn again to the same player
     }
+    console.log('Player has now ' + player.getPoints() + ' points');
     this.playerData[this.game.inTurn].client.yourTurn(this.endTurn.bind(this)); 
 }
 exports.GameInProgress = GameInProgress;

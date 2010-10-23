@@ -35,7 +35,8 @@
             var player = null,
                 domTileSet = null,
                 board = null
-                domBoard = null;
+                domBoard = null,
+                placements = [];
             $('#wordgame').hide();
             $('#end-turn').hide();
 
@@ -55,12 +56,15 @@
                     },
                     yourTurn: function (endTurn) {
                         info('Your turn');
+                        domTileSet.activate();
                         $('#end-turn').show().submit(function (e) {
                             e.preventDefault();
                             endTurn({
-                                placements: [/*{x: 0, y: 0, c: 'A'}*/]
+                                placements: placements
                             });
+                            placements = [];
                             $(this).hide().unbind();
+                            domTileSet.deactivate();
                             info('Waiting for opponents');
                         });
                                             },
@@ -72,6 +76,9 @@
                 }).connect(function (remote) {
                     remote.register();
                 });
+            });
+            $('body').bind('tile.set', function (event, x, y, c) {
+                placements.push({x: x, y: y, c: c});
             });
         }); 
     </script>

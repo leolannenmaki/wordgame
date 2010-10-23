@@ -9,7 +9,18 @@ var DomBoard = function (container, board) {
             'text-align': 'center'
        }).droppable({
             drop: function( event, ui ) {
-                $(this).css('border-color', 'red');
+                // if tile was empty on the turn start
+                if (c === ' ') {
+                    $(this).text(ui.draggable.find('span:first').text());
+                    ui.draggable.remove().remove();
+                    $('body').trigger('tile.set', [x, y, ui.draggable.find('span:first').text()]);
+                }
+            },
+            activate: function (event, ui) {
+                $(this).css('border-color', 'green');
+            },
+            deactivate: function (event, ui) {
+                $(this).css('border-color', 'black');
             }
        }));
     });

@@ -516,7 +516,18 @@ wordgame._jsbuild_.defineModule("client/domboard.js",function(exports,module,req
             'text-align': 'center'
        }).droppable({
             drop: function( event, ui ) {
-                $(this).css('border-color', 'red');
+                // if tile was empty on the turn start
+                if (c === ' ') {
+                    $(this).text(ui.draggable.find('span:first').text());
+                    ui.draggable.remove().remove();
+                    $('body').trigger('tile.set', [x, y, ui.draggable.find('span:first').text()]);
+                }
+            },
+            activate: function (event, ui) {
+                $(this).css('border-color', 'green');
+            },
+            deactivate: function (event, ui) {
+                $(this).css('border-color', 'black');
             }
        }));
     });
@@ -530,7 +541,7 @@ wordgame._jsbuild_.defineModule("client/domtileset.js",function(exports,module,r
     var frame = $('<div class="wordgame-tileset"></div>').appendTo(container); //.css('position', 'relative');
     var selected = null;
     tiles.forEach(function (tile, index) {
-       $(frame).append($('<div>' + tile.getLetter() + ' ' + tile.getValue() + '</div>').width(30).height(30).css({
+       $(frame).append($('<div><span class="letter">' + tile.getLetter() + '</span><span class="value">' + tile.getValue() + '</span></div>').width(30).height(30).css({
             //'position': 'absolute',
             //'top': 100 + index * 25 + 'px', 
             //'left': x * 25 + 'px',
@@ -540,7 +551,7 @@ wordgame._jsbuild_.defineModule("client/domtileset.js",function(exports,module,r
             'cursor': 'pointer'
        }).click(function () {
            selected = {tile: tile, el: this};
-       }).draggable()); 
+       }).draggable({'revert': true})); 
     });
 }
 exports.DomTileSet = DomTileSet;

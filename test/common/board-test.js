@@ -19,8 +19,18 @@ vows.describe('Board').addBatch({
             },
             'returns size when asked to': function(topic) {
                 assert.equal(topic.getSize(), 2);
+            },
+            'loops through each tile with eachTile': function (topic) {
+                var xs = [], ys = [], cs = [];
+                topic.eachTile(function (x, y, c) {
+                    xs.push(x);
+                    ys.push(y);
+                    cs.push(c);
+                });
+                assert.deepEqual(xs, [0, 1, 0, 1]);
+                assert.deepEqual(ys, [0, 0, 1, 1]);
+                assert.deepEqual(cs, ['o', 'o', 'n', ' ']);
             }
-
        },
        '3x3': {
             topic: new Board(3).set(1, 0, 'c').set(1, 1, 'a').set(1, 2, 'r').set(0, 1, 'c').set(2, 1, 'r'),
