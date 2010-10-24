@@ -55,8 +55,9 @@ Game.prototype = {
         var self = this,
             points = this.turnBuffer.reduce(function (sum, placement) {
                 self.board.set(placement.x, placement.y, placement.c);
-                return sum += self.whosTurn().removeTile(placement.c).getValue();
+                return sum += Number(self.whosTurn().removeTile(placement.c).getValue());
            }, 0);
+        this.turnBuffer = [];
         this.whosTurn().addPoints(points);
         if (this.inTurn + 1 === this.players.length) {
             this.inTurn = 0;

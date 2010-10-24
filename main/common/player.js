@@ -5,9 +5,15 @@ var Tile = require('./tile').Tile;
  * @param {number=} points
  */
 function Player(name, points) {
-   this.name = name;
-   this.tiles = [];
-   this.points = points || 0;
+    if (typeof name !== 'string') {
+        throw {
+            name: 'Error',
+            message: 'name must be a string'
+        }
+    }
+    this.name = name;
+    this.tiles = [];
+    this.points = points || 0;
 }
 Player.fromJson = function (json) {
     var data = null;
