@@ -4,19 +4,24 @@
 //          nextLine() -> String
 //
 //
-var fs = require("fs");
-var sys = require("sys");
+var fs = require('fs');
+var sys = require('sys');
 
+/**
+ * @constructor
+ * @param {string} filename The name of the file.
+ * @param {number=} bufferSize The size of the buffer. Default 8192.
+ */
 exports.FileLineReader = function(filename, bufferSize) {
 
-    if(!bufferSize) {
+    if (!bufferSize) {
         bufferSize = 8192;
     }
 
     //private:
     var currentPositionInFile = 0;
-    var buffer = "";
-    var fd = fs.openSync(filename, "r");
+    var buffer = '';
+    var fd = fs.openSync(filename, 'r');
 
 
     // return -1
@@ -24,7 +29,7 @@ exports.FileLineReader = function(filename, bufferSize) {
     // fills buffer with next 8192 or less bytes
     var fillBuffer = function(position) {
 
-        var res = fs.readSync(fd, bufferSize, position, "ascii");
+        var res = fs.readSync(fd, bufferSize, position, 'ascii');
 
         buffer += res[0];
         if (res[1] == 0) {
@@ -36,25 +41,31 @@ exports.FileLineReader = function(filename, bufferSize) {
 
     currentPositionInFile = fillBuffer(0);
 
-    //public:
+    //public
+    /**
+     * @return {boolean} Does the file have next line?
+     */
     this.hasNextLine = function() {
-        while (buffer.indexOf("\n") == -1) {
+        while (buffer.indexOf('\n') == -1) {
             currentPositionInFile = fillBuffer(currentPositionInFile);
             if (currentPositionInFile == -1) {
                 return false;
             }
         }
 
-        if (buffer.indexOf("\n") > -1) {
+        if (buffer.indexOf('\n') > -1) {
 
             return true;
         }
         return false;
     };
 
-    //public:
+    //public
+    /**
+     * @return {string} The next line.
+     */
     this.nextLine = function() {
-        var lineEnd = buffer.indexOf("\n");
+        var lineEnd = buffer.indexOf('\n');
         var result = buffer.substring(0, lineEnd);
 
         buffer = buffer.substring(result.length + 1, buffer.length);

@@ -1,8 +1,15 @@
-var Board = function (size, wordValidator) {
+/**
+ * @constructor
+ * @param {number} size The length of board sides.
+ * @param {function(string):boolean} wordValidator The validator used to
+ * validate played words.
+ * on the board.
+ */
+function Board(size, wordValidator) {
     this.size = size;
     this.xy = [];
     this.yx = [];
-    this.wordValidator = wordValidator || function (word) { return true; };
+    this.wordValidator = wordValidator || function(word) { return true; };
     for (var i = 0; i < size; i += 1) {
        this.xy[i] = [];
        this.yx[i] = [];
@@ -15,38 +22,36 @@ Board.prototype = {
     getSize: function() {
         return this.size;
     },
-    set: function (x, y, c) {
-       if (x < this.size && y < this.size && isString(c) && c.length == 1) { 
+    set: function(x, y, c) {
+       if (x < this.size && y < this.size &&
+           typeof c === 'string' && c.length == 1) {
            this.xy[y][x] = this.yx[x][y] = c;
            return this;
        }
-       throw {
-           name: 'Error',
-           message: 'Out of bounds or invalid type'
-       };
+       throw new Error('Out of bounds or invalid type');
     },
-    isValid: function () {
+    isValid: function() {
         var self = this;
         return isValid(this.xy) && isValid(this.yx);
         function isValid(board) {
-            return board.map(function (row) {
+            return board.map(function(row) {
             return row.join('').trim();
-            }).filter(function (word) {
+            }).filter(function(word) {
                 return word.length > 1;
-            }).every(function (word) {
+            }).every(function(word) {
                 return self.wordValidator(word);
             });
         }
 
     },
-    toString: function () {
+    toString: function() {
         var y = 0, ret = '';
         for (; y < this.size; y += 1) {
             ret += '[' + this.xy[y].join('') + ']\n';
         }
         return ret;
     },
-    eachTile: function (fn) {
+    eachTile: function(fn) {
         var x = 0, y = 0, ret = '';
         for (; y < this.size; y += 1) {
             for (x = 0; x < this.size; x += 1) {
@@ -55,9 +60,8 @@ Board.prototype = {
         }
     }
 };
-
-function isString(s) {
-	return typeof s === "string" || s instanceof String;
-}
+/**
+ * @see Board
+ */
 exports.Board = Board;
 

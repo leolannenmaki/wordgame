@@ -1,9 +1,14 @@
-var flr = require('./FileLineReader'), 
-    dict = {}, 
-    reader = new flr.FileLineReader("/usr/share/dict/words"); 
+var flr = require('./FileLineReader'),
+    dict = {},
+    reader = new flr.FileLineReader('/usr/share/dict/words');
+
 while (reader.hasNextLine()) {
-   dict[reader.nextLine()] = true; 
+   dict[reader.nextLine()] = true;
 }
-exports.wordValidator = function (word) {
+/**
+ * @param {string} word The word to be validated.
+ * @return {boolean} Is the word a valid word?
+ */
+exports.wordValidator = function(word) {
     return dict[word] || false;
-}
+};

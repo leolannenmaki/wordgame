@@ -1,8 +1,23 @@
 This is the "experimental" part of my Bachelor's Thesis.
 
-To run you need to have node.js with dnode installed.
-To test you need to have vows.js installed.
-To build you need to have JSBuild installed.
+Dependencies:
 
-I fill fix the hardcoded paths in the future.
+node.js
+    http://github.com/creationix/nvm or for exmample MacPorts
+npm
+    http://github.com/isaacs/npm
+DNode
+    npm install dnode
+Vows
+    npm install vows
+
+JSBuild
+    http://github.com/azer/jsbuild
+Google Closure Linter
+    http://code.google.com/closure/utilities/docs/linter_howto.html
+Google Closure Compiler
+    http://code.google.com/closure/compiler/docs/gettingstarted_app.html
+
+
+I try to remove the hardcoded paths in the future.
 

@@ -4,8 +4,27 @@
     <meta charset=utf-8>
     <title>Wordgame</title>
     <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/cupertino/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <style>
+        #wordgame-board {
+            position: relative;
+        }
+        #wordgame-tileset div, #wordgame-board div {
+            width: 25px;
+            height: 25px;
+            border: 1px solid black;
+            text-align: center;
+            -webkit-border-radius: 5px;
+        }
+        #wordgame-board div {
+            position: absolute;
+        }
+        #wordgame-tileset div {
+            float: left;
+        }
+    </style>
 </head>
 <body>
+    <h1>wordgame</h1>
     <div id="info" style="overflow: hidden; height: 18px;"></div>
     <form id="login">
         <input type="text" name="name" placeholder="Enter your name" autofocus/> 
@@ -24,61 +43,86 @@
     <script src="/client.js"></script>
     <script>
         $(function () {
-            var Player = wordgame.require('common').Player,
+            var DomBoard = wordgame.require('client').DomBoard,
+                DomTileSet = wordgame.require('client').DomTileSet,
+                Player = wordgame.require('common').Player,
                 Board = wordgame.require('common').Board,
-                DomBoard = wordgame.require('client').DomBoard,
-                DomTileSet = wordgame.require('client').DomTileSet;
+                domBoard,
+                board,
+                player,
+                opponent,
+                myTurn,
+                remote,
+                domTileSet;
             function info (text) {
                 $('#info').prepend('<div>' + text + '</div>');
             }
-            
-            var player = null,
-                domTileSet = null,
-                board = null
-                domBoard = null,
-                placements = [];
+            $('#wordgame').bind('wordgame.addPlayer', function (e, data) {
+                if (myTurn === undefined) {
+                    myTurn = true;
+                }
+                player = Player.fromJson(data);
+            });
+            $('#wordgame').bind('wordgame.addOpponent', function (e, name) {
+                if (myTurn === undefined) {
+                    myTurn = false;
+                }
+                opponent = new Player(name);
+            });
+            $('#wordgame').bind('wordgame.newGame', function (e, size) {
+                domBoard = new DomBoard('#wordgame', new Board(size));
+            });
+            $('#wordgame').bind('wordgame.startGame', function (e) {
+                domTileSet = new DomTileSet('#wordgame', player.getTiles());
+                if (myTurn) {
+                    domBoard.activate();
+                    $('#end-turn').show();
+                }
+            });
+            $('#wordgame').bind('wordgame.setTile', function (e, x, y, c) {
+                console.log('main setTile', arguments);
+                domBoard.setTile(x, y, c);
+                if (myTurn) {
+                    remote.gameEvent('wordgame.setTile', x, y, c); 
+                }
+            });
+            $('#wordgame').bind('wordgame.endTurn', function (e) {
+                if (myTurn) {
+                    remote.gameEvent('wordgame.endTurn');
+                    domBoard.deactivate();
+                } else {
+                    domBoard.activate();
+                    $('#end-turn').show();
+                }
+                myTurn = !myTurn;
+            });
+               
             $('#wordgame').hide();
-            $('#end-turn').hide();
+            $('#end-turn').hide().submit(function(e) {
+                e.preventDefault();
+                $('#wordgame').trigger('wordgame.endTurn');
+                $(this).hide();
+            });
 
             $('#login').submit(function (e) {
                 e.preventDefault();
                 $('#login').hide();
                 $('#wordgame').show();
                 DNode({
-                    getLoginName : function (f) { f($('input[name="name"]').val()); },
-                    setPlayer: function (p) { 
-                        window.p = player = Player.fromJson(p);
-                        board = new Board(10);
-                        domBoad = new DomBoard('#wordgame', board);
-                        domTileSet = new DomTileSet('#wordgame', player.getTiles()); 
-                        $('#player').text(player.getName() + ' points: ' + player.getPoints());
-                        info('Waiting for turn');
-                    },
-                    yourTurn: function (endTurn) {
-                        info('Your turn');
-                        domTileSet.activate();
-                        $('#end-turn').show().submit(function (e) {
-                            e.preventDefault();
-                            endTurn({
-                                placements: placements
-                            });
-                            placements = [];
-                            $(this).hide().unbind();
-                            domTileSet.deactivate();
-                            info('Waiting for opponents');
-                        });
-                                            },
                     gameEvent: function () {
+                        var name = arguments[0];
+                        console.log("Event name: ", name);
+                        var params = Array.prototype.slice.call(arguments, 1);
+                        console.log("Params: ", params);
+                        $('#wordgame').trigger(name, params);
                     },
                     info: function (text) {
                         info(text);
                     }
-                }).connect(function (remote) {
-                    remote.register();
+                    }).connect(function (r) {
+                    remote = r;
+                    remote.register($('input[name="name"]').val());
                 });
-            });
-            $('body').bind('tile.set', function (event, x, y, c) {
-                placements.push({x: x, y: y, c: c});
             });
         }); 
     </script>

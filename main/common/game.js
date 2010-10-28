@@ -2,48 +2,40 @@ var Board = require('./board').Board,
     TileSet = require('./tileset').TileSet;
 /**
  * @constructor
- * @param {number} size
- * @param {function=} wordValidator
- * @param {string=} uuid
+ * @param {number} size The length of the board's sides.
+ * @param {function(string):boolean} wordValidator The validator used to
+ * validate played words.
+ * words on the board.
+ * @param {TileSet=} tileSet The tiles used for the game.
  */
-var Game = function (size, wordValidator, uuid) {
+function Game(size, wordValidator, tileSet) {
     this.size = size;
-    this.uuid = uuid || 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     this.board = new Board(this.size, wordValidator);
     this.players = [];
     this.inTurn = 0;
     this.turnBuffer = [];
-    this.tileSet = new TileSet();
+    // on the client side game doesn't control tileset
+    this.tileSet = tileSet || null;
 }
 Game.prototype = {
-    /**
-     * @param {Player} player
-     */
-    addPlayer: function (player) {
+    addPlayer: function(player) {
         this.players.push(player);
         return this;
     },
-    start: function () {
+    startGame: function() {
         if (this.players < 2) {
-            throw {
-                name: 'Error',
-                message: 'Not enough players'
-            };
+            throw new Error('Not enough players');
         }
-        this.tileSet.giveStartingTilesTo(this.players);
+        if (this.tileSet !== null) {
+            this.tileSet.giveStartingTilesTo(this.players);
+        }
         return this;
     },
-    whosTurn: function () {
-        return this.players[this.inTurn]; 
+    whosTurn: function() {
+        return this.players[this.inTurn];
     },
-    set: function (player, x, y, c) {
-        var name = isString(player) ? player : player.getName();
-        if (name !== this.whosTurn().getName()) {
-            throw {
-                name: 'Error',
-                message: 'Invalid player'
-            };
-        }
+    setTile: function(x, y, c) {
+        console.log('Setting:', x, y, c);
         this.turnBuffer.push({
             x: x,
             y: y,
@@ -51,26 +43,32 @@ Game.prototype = {
         });
         return this;
     },
-    endTurn: function () {
+    endTurn: function() {
+        console.log('Ending ' + this.whosTurn().getName());
         var self = this,
-            points = this.turnBuffer.reduce(function (sum, placement) {
+            points = this.turnBuffer.reduce(function(sum, placement) {
                 self.board.set(placement.x, placement.y, placement.c);
-                return sum += Number(self.whosTurn().removeTile(placement.c).getValue());
+                return sum += Number(
+                    self.whosTurn().removeTile(placement.c).getValue());
            }, 0);
-        this.turnBuffer = [];
         this.whosTurn().addPoints(points);
         if (this.inTurn + 1 === this.players.length) {
             this.inTurn = 0;
         } else {
             this.inTurn++;
         }
+       var tempTurnBuffer = this.turnBuffer;
+       this.turnBuffer = [];
+       return tempTurnBuffer;
     },
-   toString: function () {
+    getBoard: function() {
+        return this.board;
+    },
+    toString: function() {
         return this.board.toString();
     }
 };
-function isString(s) {
-	return typeof s === "string" || s instanceof String;
-}
-
+/**
+ * @see Game
+ */
 exports.Game = Game;

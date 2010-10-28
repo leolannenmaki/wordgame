@@ -1,9 +1,9 @@
 var Tile = require('./tile').Tile;
 /**
  * @constructor
- * @param {string=} language
+ * @param {string=} language Which language tileset to use?
  */
-function TileSet (language) {
+function TileSet(language) {
     this.language = language || 'en';
     this.tiles = this.createSet();
 }
@@ -59,38 +59,37 @@ TileSet.prototype = {
         var tiles = [];
         for (var value in this.tiles[this.language]) {
             for (var letter in this.tiles[this.language][value]) {
-                for (var i = 0; i < this.tiles[this.language][value][letter]; i++) {
+                for (var i = 0;
+                     i < this.tiles[this.language][value][letter];
+                     i++) {
                     tiles.push(new Tile(letter, value));
                 }
             }
         }
         return tiles;
     },
-    getTiles: function () {
+    getTiles: function() {
         return this.tiles;
     },
-    tilesLeft: function () {
-       return this.tiles.length; 
+    tilesLeft: function() {
+       return this.tiles.length;
     },
     getRandomTile: function() {
         if (this.tilesLeft() === 0) {
-            throw {
-                name: 'Error',
-                message: 'No tiles left'
-            };
+            throw new Error('No tiles left');
         }
-        var tile = this.tiles.splice(Math.round(Math.random() * (this.tilesLeft() - 1)), 1)[0];
+        var tile = this.tiles.splice(
+                Math.round(Math.random() * (this.tilesLeft() - 1)), 1)[0];
         return tile;
     },
-    /**
-     * @param {array.<Player>} players
-     */
-    giveStartingTilesTo: function (players) {
+    giveStartingTilesTo: function(players) {
         for (var i = 0; i < players.length * 7; i++) {
              players[i % players.length].addTile(this.getRandomTile());
         }
     }
 };
-
+/**
+ * @see TileSet
+ */
 exports.TileSet = TileSet;
 
